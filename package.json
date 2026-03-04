@@ -10,14 +10,14 @@
     "file-saver": "^2.0.0-rc.4",
     "jsonp": "^0.2.1",
     "prop-types": "^15.6.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "react-scripts": "1.1.0",
     "xlsx": "^0.11.18"
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "GIT_SHA=$(git rev-parse --short HEAD) react-app-rewired build",
+    "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject",
     "publish": "sh publish.sh"
