@@ -61,7 +61,7 @@ class App extends Component {
       })),
       coordsValue: 'default',
     })
-    getCode(o.platform, o.locations, o.apiKey, (code) => {
+    getCode(o.platform, o.locations, o.apiKey, o.baiduApiKey, (code) => {
       code.key = uniqueId()
       this.setState({
         results: [...this.state.results, code],

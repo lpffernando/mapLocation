@@ -22,6 +22,7 @@ class LocationInput extends Component {
     this.state = {
       showCustomApiKey: false,
       showApiKeyInput: false,
+      platform: 'baidu',
     }
   }
 
@@ -33,22 +34,17 @@ class LocationInput extends Component {
           platform: values.platform,
           locations: values.locations.split('\n').filter(v => v.trim() !== ''),
           apiKey: values.platform === 'google' && this.state.showApiKeyInput ? values.apiKey :'',
+          baiduApiKey: values.platform === 'baidu' && this.state.showApiKeyInput ? values.apiKey :'',
         })
       }
     })
   }
 
   onPlatformChange = (e) => {
-    if (e.target.value === 'google') {
-      this.setState({
-        showCustomApiKey: true,
-      })
-      return 
-    }
-
     this.setState({
-      showCustomApiKey: false,
+      showCustomApiKey: true,
       showApiKeyInput: false,
+      platform: e.target.value,
     })
   }
 
@@ -89,6 +85,9 @@ class LocationInput extends Component {
                         <Popover title="Baidu地址要求" content={baiduTip}>
                           <Icon type="question-circle"/>
                         </Popover>
+                        { this.state.showCustomApiKey &&
+                          <a onClick={this.showApiKeyInput} className="custom-api-key">自定义API_KEY</a>
+                        }
                       </div>
                       <div className="radio" >
                         <Radio value="google">
@@ -106,13 +105,16 @@ class LocationInput extends Component {
                 </FormItem>
               </Col>
               {
-                this.state.showApiKeyInput && 
+                this.state.showApiKeyInput &&
                 <Col span={24}>
                   <FormItem>
                     {getFieldDecorator('apiKey', {initialValue: ''})(
-                        <Input placeholder="请输入您的 Google API_KEY" />
+                      <Input placeholder={`请输入您的 ${this.state.platform === 'baidu' ? 'Baidu' : 'Google'} API_KEY`} />
                     )}
-                    <a href="https://github.com/sjfkai/mapLocation/blob/master/docs/FAQ.md#%E5%A6%82%E4%BD%95%E7%94%B3%E8%AF%B7google-api_key" target="_blank"  rel="noopener noreferrer">如何申请？</a>
+                    <a href={this.state.platform === 'baidu'
+                      ? "https://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-geocoding"
+                      : "https://github.com/sjfkai/mapLocation/blob/master/docs/FAQ.md#%E5%A6%82%E4%BD%95%E7%94%B3%E8%AF%B7google-api_key"
+                    } target="_blank" rel="noopener noreferrer">如何申请？</a>
                   </FormItem>
                 </Col>
               }

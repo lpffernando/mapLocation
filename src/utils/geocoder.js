@@ -27,7 +27,7 @@ function clearStorage(count = 10) {
   }
 }
 
-export async function getCode(platform, locations, apiKey, onProgress) {
+export async function getCode(platform, locations, apiKey, baiduApiKey, onProgress) {
   if(!locations || !locations.length) {
     return []
   }
@@ -41,14 +41,14 @@ export async function getCode(platform, locations, apiKey, onProgress) {
         throw new Error('OVER_QUERY_LIMIT')
       }
     } else {
-      code = await getCodeFromBaidu(location)
+      code = await getCodeFromBaidu(location, baiduApiKey)
     }
     onProgress(code)
   }
   return result
 }
 
-async function getCodeFromBaidu(location){
+async function getCodeFromBaidu(location, apiKey){
   const cacheKey = `baidu_${location}`
   const cache = getFromStorage(cacheKey)
   if (cache) {
@@ -56,7 +56,19 @@ async function getCodeFromBaidu(location){
   }
   // 为了不超qps限制，手动增加间隔
   await sleep(500)
-  const url = `https://api.map.baidu.com/geocoder/v2/?address=${encodeURIComponent(location)}&output=json&ak=${window.baiduApiKey}`
+
+  // 使用用户提供的 API Key，如果没有提供则使用环境变量中的
+  const key = apiKey || window.baiduApiKey || ''
+  if (!key) {
+    return {
+      location,
+      isError: true,
+      message: '请先设置百度 API Key',
+      status: 'NO_API_KEY',
+    }
+  }
+
+  const url = `https://api.map.baidu.com/geocoder/v2/?address=${encodeURIComponent(location)}&output=json&ak=${key}`
 
   const res = await jsonpPromise(url, {
     param: 'callback',
